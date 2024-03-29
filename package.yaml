@@ -75,20 +75,20 @@ default-extensions:
 library:
   source-dirs: src
   dependencies:
-   - HDBC
-   - HUnit
-   - aeson
-   - bytestring
-   - configurator
-   - containers
-   - directory
-   - fgl
-   - filepath
-   - mtl
-   - string-conversions
-   - text
-   - time
-   - yaml
+    - HDBC
+    - HUnit
+    - aeson
+    - bytestring
+    - configurator
+    - containers
+    - directory
+    - fgl
+    - filepath
+    - mtl
+    - string-conversions
+    - text
+    - time
+    - yaml
 
 tests:
   spec:

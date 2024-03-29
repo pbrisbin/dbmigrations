@@ -147,19 +147,19 @@ _In the examples below, replace any `moo` command shown with `moo-<backend>`._
 
 10. Revert the migration.
 
-   ```console
-   % moo revert hello-world
-   Reverting: hello-world... done.
-   Successfully reverted migrations.
-   ```
+    ```console
+    % moo revert hello-world
+    Reverting: hello-world... done.
+    Successfully reverted migrations.
+    ```
 
 11. List migrations that have not been installed.
 
-   ```console
-   % moo upgrade-list
-   Migrations to install:
-     hello-world
-   ```
+    ```console
+    % moo upgrade-list
+    Migrations to install:
+      hello-world
+    ```
 
 ## Configuration File Format
 
