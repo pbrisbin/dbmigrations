@@ -78,7 +78,7 @@ _In the examples below, replace any `moo` command shown with `moo-<backend>`._
    Database is up to date.
    ```
 
-5. Create a migration with `moo new`.  Here is an example output:
+5. Create a migration with `moo new`. Here is an example output:
 
    ```console
    % moo new hello-world
@@ -105,7 +105,7 @@ _In the examples below, replace any `moo` command shown with `moo-<backend>`._
    ```
 
    This migration has no valid apply or revert SQL yet; that's for you to
-   provide.  You might edit the apply and revert fields as follows:
+   provide. You might edit the apply and revert fields as follows:
 
    ```yaml
    Apply: |
@@ -126,7 +126,7 @@ _In the examples below, replace any `moo` command shown with `moo-<backend>`._
    ```
 
 8. Install the migration. This can be done in one of two ways: with `moo
-   upgrade` or with `moo apply`.  Here are examples:
+   upgrade` or with `moo apply`. Here are examples:
 
    ```console
    % moo apply hello-world
@@ -210,7 +210,7 @@ Dependencies: (required, but may be empty) a whitespace-separated
 ```
 
 The format of this file is somewhat flexible; please see the YAML 1.2 format
-specification for a full description of syntax features.  I recommend appending
+specification for a full description of syntax features. I recommend appending
 "|" to the Apply and Revert fields if they contain multi-line SQL that you want
 to keep that way, e.g.,
 
@@ -247,7 +247,7 @@ settings:
 DBM_DATABASE
 
   The database connection string for the database you'll be
-  managing.  The connection strings for each supported database type
+  managing. The connection strings for each supported database type
   are as follows:
 
   PostgreSQL:
@@ -274,10 +274,10 @@ DBM_DATABASE
 DBM_MIGRATION_STORE
 
   The path to the filesystem directory where your migrations will be
-  kept.  moo will create new migrations in this directory and use
+  kept. moo will create new migrations in this directory and use
   the migrations in this directory when updating the database
-  schema.  Initially, you'll probably set this to an extant (but
-  empty) directory.  moo will not create it for you.
+  schema. Initially, you'll probably set this to an extant (but
+  empty) directory. moo will not create it for you.
 
 DBM_LINEAR_MIGRATIONS
 
@@ -294,46 +294,46 @@ DBM_TIMESTAMP_FILENAMES
 
 ```
   new <migration name>: create a new migration with the given name and
-    save it in the migration store.  This command will prompt you for
+    save it in the migration store. This command will prompt you for
     dependencies on other migrations (if the 'linear migrations'
     feature is disabled) and ask for confirmation before creating the
-    migration in the store.  If you use the --no-ask flag, the migration
+    migration in the store. If you use the --no-ask flag, the migration
     will be created immediately with no dependencies.
 
   apply <migration name>: apply the specified migration (and its
-    dependencies) to the database.  This operation will be performed
+    dependencies) to the database. This operation will be performed
     in a single transaction which will be rolled back if an error
-    occurs.  moo will output updates as each migration is applied.
+    occurs. moo will output updates as each migration is applied.
 
   revert <migration name>: revert the specified migration (and its
     reverse dependencies -- the migrations which depend on it) from
-    the database.  This operation will be performed in a single
-    transaction which will be rolled back if an error occurs.  moo
+    the database. This operation will be performed in a single
+    transaction which will be rolled back if an error occurs. moo
     will output updates as each migration is reverted.
 
   test <migration name>: once you've created a migration, you might
     find it useful to test the migration to be sure that it is
     syntactically valid; the "test" command will apply the specified
     migration and revert it (if revert SQL is specified in the
-    migration).  It will perform both of these operations in a
+    migration). It will perform both of these operations in a
     transaction and then issue a rollback.
 
   upgrade: this will apply all migrations in the migration store which
-    have not yet been applied to the database.  Each migration will be
-    applied with its dependenciees in the correct order.  All of the
-    migrations will be applied together in a single transaction.  By
+    have not yet been applied to the database. Each migration will be
+    applied with its dependenciees in the correct order. All of the
+    migrations will be applied together in a single transaction. By
     default, this transaction is committed; if you use the --test
     flag, the transaction will be rolled back, allowing you to test
     the entire upgrade process.
 
   upgrade-list: this will list the migrations that the "upgrade"
-    command would apply if you were to run it.  In other words, this
+    command would apply if you were to run it. In other words, this
     will list all migrations which have not yet been applied to the
     database.
 
   reinstall: this will revert, then reapply a migration, all in a
-    transaction.  If --test is specified, the transaction will be
-    rolled back; otherwise it will be committed.  This is mostly
+    transaction. If --test is specified, the transaction will be
+    rolled back; otherwise it will be committed. This is mostly
     useful in development when a migration applies but is incorrect
     and needs to be tweaked and reapplied.
 ```
