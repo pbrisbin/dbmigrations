@@ -225,7 +225,7 @@ Revert: |
   DROP TABLE bar;
 ```
 
-Note that this is only *necessary* when concatenating the lines would have a
+Note that this is only _necessary_ when concatenating the lines would have a
 different meaning, e.g.,
 
 ```yaml
