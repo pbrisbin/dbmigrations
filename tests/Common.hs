@@ -13,7 +13,6 @@ import Data.Text (Text)
 import Database.Schema.Migrations.Dependencies (Dependable (..))
 import Language.Haskell.TH.Syntax (lift)
 import System.FilePath ((</>))
-import Test.HUnit
 
 repoRoot :: FilePath
 repoRoot = $(getRepoRoot >>= lift)
