@@ -78,7 +78,6 @@ library
       Moo.CommandUtils
       Moo.Core
       Moo.Main
-      StoreManager
   other-modules:
       Paths_dbmigrations
   hs-source-dirs:
@@ -99,7 +98,6 @@ library
       GeneralizedNewtypeDeriving
       LambdaCase
       MultiParamTypeClasses
-      NoImplicitPrelude
       NoMonomorphismRestriction
       OverloadedStrings
       RankNTypes
@@ -120,13 +118,9 @@ library
     , fgl
     , filepath
     , mtl
-    , random
-    , split
     , string-conversions
-    , template-haskell
     , text
     , time
-    , unordered-containers
     , yaml
   default-language: GHC2021
 
@@ -152,7 +146,6 @@ executable moo
       GeneralizedNewtypeDeriving
       LambdaCase
       MultiParamTypeClasses
-      NoImplicitPrelude
       NoMonomorphismRestriction
       OverloadedStrings
       RankNTypes
@@ -202,7 +195,6 @@ test-suite spec
       GeneralizedNewtypeDeriving
       LambdaCase
       MultiParamTypeClasses
-      NoImplicitPrelude
       NoMonomorphismRestriction
       OverloadedStrings
       RankNTypes
