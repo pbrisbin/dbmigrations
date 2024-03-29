@@ -46,6 +46,14 @@ ghc-options:
   - -Wno-safe
   - -Wno-unsafe
 
+when:
+  - condition: "impl(ghc >= 9.2)"
+    ghc-options:
+      - -Wno-missing-kind-signatures
+  - condition: "impl(ghc >= 8.10)"
+    ghc-options:
+      - -Wno-missing-safe-haskell-mode
+
 dependencies:
   - base < 5
 
@@ -66,6 +74,7 @@ default-extensions:
   - GeneralizedNewtypeDeriving
   - LambdaCase
   - MultiParamTypeClasses
+  - NoImplicitPrelude
   - NoMonomorphismRestriction
   - OverloadedStrings
   - RankNTypes
@@ -73,9 +82,6 @@ default-extensions:
   - StandaloneDeriving
   - TypeApplications
   - TypeFamilies
-
-  # Next
-  # - NoImplicitPrelude
 
   # Soon after
   # - DuplicateRecordFields
@@ -106,30 +112,15 @@ tests:
     ghc-options: -threaded -rtsopts "-with-rtsopts=-N"
     main: Main.hs
     dependencies:
-      - HDBC
       - HUnit
-      - MissingH
       - bytestring
-      - configurator
       - containers
       - dbmigrations
       - directory
       - fgl
       - filepath
       - mtl
-      - process
-      - split
       - string-conversions
       - template-haskell
       - text
       - time
-      - yaml
-
-executables:
-  moo:
-    source-dirs: app
-    main: Main.hs
-    ghc-options: -threaded -rtsopts "-with-rtsopts=-N"
-    dependencies:
-      - configurator
-      - dbmigrations

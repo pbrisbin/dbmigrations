@@ -98,6 +98,7 @@ library
       GeneralizedNewtypeDeriving
       LambdaCase
       MultiParamTypeClasses
+      NoImplicitPrelude
       NoMonomorphismRestriction
       OverloadedStrings
       RankNTypes
@@ -123,42 +124,10 @@ library
     , time
     , yaml
   default-language: GHC2021
-
-executable moo
-  main-is: Main.hs
-  other-modules:
-      Paths_dbmigrations
-  hs-source-dirs:
-      app
-  default-extensions:
-      BangPatterns
-      DataKinds
-      DeriveAnyClass
-      DeriveFoldable
-      DeriveFunctor
-      DeriveGeneric
-      DeriveLift
-      DeriveTraversable
-      DerivingStrategies
-      FlexibleContexts
-      FlexibleInstances
-      GADTs
-      GeneralizedNewtypeDeriving
-      LambdaCase
-      MultiParamTypeClasses
-      NoMonomorphismRestriction
-      OverloadedStrings
-      RankNTypes
-      ScopedTypeVariables
-      StandaloneDeriving
-      TypeApplications
-      TypeFamilies
-  ghc-options: -Weverything -Wno-all-missed-specialisations -Wno-missed-specialisations -Wno-missing-exported-signatures -Wno-missing-import-lists -Wno-missing-local-signatures -Wno-monomorphism-restriction -Wno-safe -Wno-unsafe -threaded -rtsopts "-with-rtsopts=-N"
-  build-depends:
-      base <5
-    , configurator
-    , dbmigrations
-  default-language: GHC2021
+  if impl(ghc >= 9.2)
+    ghc-options: -Wno-missing-kind-signatures
+  if impl(ghc >= 8.10)
+    ghc-options: -Wno-missing-safe-haskell-mode
 
 test-suite spec
   type: exitcode-stdio-1.0
@@ -195,6 +164,7 @@ test-suite spec
       GeneralizedNewtypeDeriving
       LambdaCase
       MultiParamTypeClasses
+      NoImplicitPrelude
       NoMonomorphismRestriction
       OverloadedStrings
       RankNTypes
@@ -204,23 +174,21 @@ test-suite spec
       TypeFamilies
   ghc-options: -Weverything -Wno-all-missed-specialisations -Wno-missed-specialisations -Wno-missing-exported-signatures -Wno-missing-import-lists -Wno-missing-local-signatures -Wno-monomorphism-restriction -Wno-safe -Wno-unsafe -threaded -rtsopts "-with-rtsopts=-N"
   build-depends:
-      HDBC
-    , HUnit
-    , MissingH
+      HUnit
     , base <5
     , bytestring
-    , configurator
     , containers
     , dbmigrations
     , directory
     , fgl
     , filepath
     , mtl
-    , process
-    , split
     , string-conversions
     , template-haskell
     , text
     , time
-    , yaml
   default-language: GHC2021
+  if impl(ghc >= 9.2)
+    ghc-options: -Wno-missing-kind-signatures
+  if impl(ghc >= 8.10)
+    ghc-options: -Wno-missing-safe-haskell-mode
