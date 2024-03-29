@@ -49,7 +49,7 @@ createNewMigration store newM = do
       then
         ( do
             fullPath <- S.fullMigrationName store (mId newM)
-            pure $ Left $ "Migration " ++ show fullPath ++ " already exists"
+            pure $ Left $ "Migration " <> show fullPath <> " already exists"
         )
       else
         ( do
@@ -84,7 +84,7 @@ migrationsToApply storeData backend migration = do
   allMissing <- missingMigrations backend storeData
 
   let
-    deps = dependencies graph (mId migration) ++ [mId migration]
+    deps = dependencies graph (mId migration) <> [mId migration]
     namesToInstall = [e | e <- deps, e `elem` allMissing]
     loadedMigrations = mapMaybe (S.storeLookup storeData) namesToInstall
 
@@ -104,7 +104,7 @@ migrationsToRevert storeData backend migration = do
   allInstalled <- B.getMigrations backend
 
   let
-    rDeps = reverseDependencies graph (mId migration) ++ [mId migration]
+    rDeps = reverseDependencies graph (mId migration) <> [mId migration]
     namesToRevert = [e | e <- rDeps, e `elem` allInstalled]
     loadedMigrations = mapMaybe (S.storeLookup storeData) namesToRevert
 

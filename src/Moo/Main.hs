@@ -32,18 +32,18 @@ usage :: IO a
 usage = do
   progName <- getProgName
 
-  putStrLn $ "Usage: " ++ progName ++ " <command> [args]"
+  putStrLn $ "Usage: " <> progName <> " <command> [args]"
   putStrLn "Environment:"
-  putStrLn $ "  " ++ envDatabaseName ++ ": database connection string"
-  putStrLn $ "  " ++ envStoreName ++ ": path to migration store"
+  putStrLn $ "  " <> envDatabaseName <> ": database connection string"
+  putStrLn $ "  " <> envStoreName <> ": path to migration store"
   putStrLn $
     "  "
-      ++ envLinearMigrations
-      ++ ": whether to use linear migrations (defaults to False)"
+      <> envLinearMigrations
+      <> ": whether to use linear migrations (defaults to False)"
   putStrLn "Commands:"
   forM_ commands $ \command -> do
-    putStrLn $ "  " ++ usageString command
-    putStrLn $ "  " ++ _cDescription command
+    putStrLn $ "  " <> usageString command
+    putStrLn $ "  " <> _cDescription command
     putStrLn ""
 
   putStrLn commandOptionUsage
@@ -52,7 +52,7 @@ usage = do
 usageSpecific :: Command -> IO a
 usageSpecific command = do
   pn <- getProgName
-  putStrLn $ "Usage: " ++ pn ++ " " ++ usageString command
+  putStrLn $ "Usage: " <> pn <> " " <> usageString command
   exitWith (ExitFailure 1)
 
 procArgs :: Args -> IO (Command, CommandOptions, [String])
@@ -81,7 +81,7 @@ mainWithParameters args parameters = do
       case loadedStoreData of
         Left es -> do
           putStrLn "There were errors in the migration store:"
-          forM_ es $ \err -> putStrLn $ "  " ++ show err
+          forM_ es $ \err -> putStrLn $ "  " <> show err
         Right storeData -> do
           let st =
                 AppState
@@ -100,5 +100,5 @@ mainWithParameters args parameters = do
 
 reportSqlError :: SqlError -> IO a
 reportSqlError e = do
-  putStrLn $ "\n" ++ "A database error occurred: " ++ seErrorMsg e
+  putStrLn $ "\nA database error occurred: " <> seErrorMsg e
   exitWith (ExitFailure 1)

@@ -26,8 +26,8 @@ replace elems index val
   | index > length elems = error "replacement index too large"
   | otherwise =
       take index elems
-        ++ [val]
-        ++ reverse (take (length elems - (index + 1)) $ reverse elems)
+        <> [val]
+        <> reverse (take (length elems - (index + 1)) $ reverse elems)
 
 setMark :: Int -> Mark -> State CycleDetectionState ()
 setMark n mark = do

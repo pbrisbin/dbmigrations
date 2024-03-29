@@ -126,7 +126,7 @@ confirmCreation migrationId deps = do
 prompt :: Eq a => String -> PromptChoices a -> IO a
 prompt _ [] = error "prompt requires a list of choices"
 prompt message choiceMap = do
-  putStr $ message ++ " (" ++ choiceStr ++ helpChar ++ "): "
+  putStr $ message <> " (" <> choiceStr <> helpChar <> "): "
   hFlush stdout
   c <- unbufferedGetChar
   case lookup c choiceMap of
@@ -139,7 +139,7 @@ prompt message choiceMap = do
   retry = prompt message choiceMap
   choiceStr = intercalate "" $ map (pure . fst) choiceMap
   helpChar = if hasHelp choiceMap then "h" else ""
-  choiceMapWithHelp = choiceMap ++ [('h', (undefined, Just "this help"))]
+  choiceMapWithHelp = choiceMap <> [('h', (undefined, Just "this help"))]
 
 -- Given a PromptChoices, build a multi-line help string for those
 -- choices using the description information in the choice list.
@@ -147,7 +147,7 @@ mkPromptHelp :: PromptChoices a -> String
 mkPromptHelp choices =
   intercalate
     ""
-    [ [c] ++ ": " ++ fromJust msg ++ "\n"
+    [ [c] <> ": " <> fromJust msg <> "\n"
     | (c, (_, msg)) <- choices
     , isJust msg
     ]
@@ -194,7 +194,7 @@ interactiveAskDeps storeData = do
 interactiveAskDeps' :: StoreData -> [Text] -> IO [Text]
 interactiveAskDeps' _ [] = pure []
 interactiveAskDeps' storeData (name : rest) = do
-  result <- prompt ("Depend on '" ++ cs name ++ "'?") askDepsChoices
+  result <- prompt ("Depend on '" <> cs name <> "'?") askDepsChoices
   if result == Done
     then pure []
     else case result of
@@ -212,7 +212,7 @@ interactiveAskDeps' storeData (name : rest) = do
                 "  Description: "
                   <> fromJust (mDesc m)
             )
-          putStrLn $ "      Created: " ++ show (mTimestamp m)
+          putStrLn $ "      Created: " <> show (mTimestamp m)
           unless
             (null $ mDeps m)
             ( putStrLn . cs $
