@@ -1,4 +1,5 @@
 restylers:
-  - fourmolu
   - "!stylish-haskell"
+  - fourmolu
+  - hlint
   - "*"
