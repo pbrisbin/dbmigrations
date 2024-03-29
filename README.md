@@ -125,8 +125,13 @@ _In the examples below, replace any `moo` command shown with `moo-<backend>`._
    Successfully tested migrations.
    ```
 
+<!-- prettier-ignore-start -->
+<!-- it gets confused on the line-break-within-code of moo upgrade -->
+
 8. Install the migration. This can be done in one of two ways: with `moo
    upgrade` or with `moo apply`. Here are examples:
+
+<!-- prettier-ignore-end -->
 
    ```console
    % moo apply hello-world
@@ -228,11 +233,15 @@ Revert: |
 Note that this is only _necessary_ when concatenating the lines would have a
 different meaning, e.g.,
 
+<!-- prettier-ignore-start -->
+
 ```yaml
 Apply:
   -- Comment here
   CREATE TABLE;
 ```
+
+<!-- prettier-ignore-end -->
 
 Without "|" on the "Apply:" line, the above text would be collapsed to "--
 Comment here CREATE TABLE;" which is probably not what you want. For a full
