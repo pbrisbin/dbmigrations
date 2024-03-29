@@ -113,7 +113,6 @@ tests:
     main: Spec.hs
     dependencies:
       - HUnit
-      - bytestring
       - containers
       - dbmigrations
       - directory

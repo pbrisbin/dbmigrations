@@ -140,7 +140,7 @@ test-suite spec
       DependencySpec
       FilesystemParseSpec
       FilesystemSerializeSpec
-      FilesystemTest
+      FilesystemSpec
       InMemoryStore
       LinearMigrationsTest
       Main
@@ -177,7 +177,6 @@ test-suite spec
   build-depends:
       HUnit
     , base <5
-    , bytestring
     , containers
     , dbmigrations
     , directory
