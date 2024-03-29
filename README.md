@@ -131,7 +131,6 @@ _In the examples below, replace any `moo` command shown with `moo-<backend>`._
 8. Install the migration. This can be done in one of two ways: with `moo
    upgrade` or with `moo apply`. Here are examples:
 
-<!-- prettier-ignore-end -->
 
    ```console
    % moo apply hello-world
@@ -142,6 +141,8 @@ _In the examples below, replace any `moo` command shown with `moo-<backend>`._
    Applying: hello-world... done.
    Database successfully upgraded.
    ```
+
+<!-- prettier-ignore-end -->
 
 9. List installed migrations with `moo list`.
 
