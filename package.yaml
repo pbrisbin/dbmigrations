@@ -36,6 +36,7 @@ extra-source-files:
   - tests/migration_parsing/*
 
 ghc-options:
+  - -fwrite-ide-info
   - -Weverything
   - -Wno-all-missed-specialisations
   - -Wno-missed-specialisations
