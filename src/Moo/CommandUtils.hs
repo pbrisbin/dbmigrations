@@ -51,8 +51,8 @@ apply m storeData backend complain = do
 
   -- Apply them
   if null toApply
-    then nothingToDo >> return []
-    else mapM_ (applyIt backend) toApply >> return toApply
+    then nothingToDo >> pure []
+    else mapM_ (applyIt backend) toApply >> pure toApply
  where
   nothingToDo =
     when complain $
@@ -73,8 +73,8 @@ revert m storeData backend = do
 
   -- Revert them
   if null toRevert
-    then nothingToDo >> return []
-    else mapM_ (revertIt backend) toRevert >> return toRevert
+    then nothingToDo >> pure []
+    else mapM_ (revertIt backend) toRevert >> pure toRevert
  where
   nothingToDo =
     putStrLn . cs $
@@ -94,7 +94,7 @@ lookupMigration storeData name = do
     Nothing -> do
       putStrLn . cs $ "No such migration: " <> name
       exitWith (ExitFailure 1)
-    Just m' -> return m'
+    Just m' -> pure m'
 
 -- Given an action that needs a database connection, connect to the
 -- database using the backend and invoke the action
@@ -134,10 +134,10 @@ prompt message choiceMap = do
       when (c /= '\n') $ putStrLn ""
       when (c == 'h') $ putStr $ mkPromptHelp choiceMapWithHelp
       retry
-    Just (val, _) -> putStrLn "" >> return val
+    Just (val, _) -> putStrLn "" >> pure val
  where
   retry = prompt message choiceMap
-  choiceStr = intercalate "" $ map (return . fst) choiceMap
+  choiceStr = intercalate "" $ map (pure . fst) choiceMap
   helpChar = if hasHelp choiceMap then "h" else ""
   choiceMapWithHelp = choiceMap ++ [('h', (undefined, Just "this help"))]
 
@@ -170,7 +170,7 @@ unbufferedGetChar = do
   hSetBuffering stdin NoBuffering
   c <- getChar
   hSetBuffering stdin bufferingMode
-  return c
+  pure c
 
 -- The types for choices the user can make when being prompted for
 -- dependencies.
@@ -192,15 +192,15 @@ interactiveAskDeps storeData = do
 -- user view information about potential dependencies.  Returns a list
 -- of migration names which were selected.
 interactiveAskDeps' :: StoreData -> [Text] -> IO [Text]
-interactiveAskDeps' _ [] = return []
+interactiveAskDeps' _ [] = pure []
 interactiveAskDeps' storeData (name : rest) = do
   result <- prompt ("Depend on '" ++ cs name ++ "'?") askDepsChoices
   if result == Done
-    then return []
+    then pure []
     else case result of
       Yes -> do
         next <- interactiveAskDeps' storeData rest
-        return $ name : next
+        pure $ name : next
       No -> interactiveAskDeps' storeData rest
       View -> do
         -- load migration
@@ -225,7 +225,7 @@ interactiveAskDeps' storeData (name : rest) = do
       Quit -> do
         putStrLn "cancelled."
         exitWith (ExitFailure 1)
-      Done -> return []
+      Done -> pure []
 
 -- The choices the user can make when being prompted for dependencies.
 askDepsChoices :: PromptChoices AskDepsChoice

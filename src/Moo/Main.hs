@@ -59,11 +59,11 @@ procArgs :: Args -> IO (Command, CommandOptions, [String])
 procArgs args = do
   when (null args) usage
 
-  command <- maybe usage return (findCommand $ head args)
+  command <- maybe usage pure (findCommand $ head args)
 
   (opts, required) <- getCommandArgs $ tail args
 
-  return (command, opts, required)
+  pure (command, opts, required)
 
 mainWithParameters :: Args -> ExecutableParameters -> IO ()
 mainWithParameters args parameters = do

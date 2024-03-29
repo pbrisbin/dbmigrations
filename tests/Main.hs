@@ -24,18 +24,18 @@ loadTests = do
     sequence
       [ do
           fspTests <- FilesystemParseTest.tests
-          return $ "Filesystem Parsing" ~: test fspTests
+          pure $ "Filesystem Parsing" ~: test fspTests
       , do
           fsTests <- FilesystemTest.tests
-          return $ "Filesystem general" ~: test fsTests
+          pure $ "Filesystem general" ~: test fsTests
       , do
           linTests <- LinearMigrationsTest.tests
-          return $ "Linear migrations" ~: test linTests
+          pure $ "Linear migrations" ~: test linTests
       , do
           cfgTests <- ConfigurationTest.tests
-          return $ "Configuration tests" ~: test cfgTests
+          pure $ "Configuration tests" ~: test cfgTests
       ]
-  return $
+  pure $
     concat
       [ ioTests
       , DependencyTest.tests

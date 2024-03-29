@@ -151,7 +151,7 @@ mkParsingTest :: MigrationParsingTestCase -> IO Test
 mkParsingTest (fname, expected) = do
   let store = FSStore {storePath = testStorePath}
   actual <- migrationFromFile store (cs fname)
-  return $ test $ expected ~=? actual
+  pure $ test $ expected ~=? actual
 
 migrationParsingTests :: IO [Test]
 migrationParsingTests =

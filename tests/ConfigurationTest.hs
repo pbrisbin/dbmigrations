@@ -48,7 +48,7 @@ loadsConfigFile = do
 loadsPropertiesFromFile :: IO Test
 loadsPropertiesFromFile = do
   Right cfg <- loadConfiguration (Just "cfg1.cfg")
-  return
+  pure
     ( _connectionString cfg
         ~?= "connection"
         .&&. _migrationStorePath cfg
@@ -60,7 +60,7 @@ loadsPropertiesFromFile = do
 loadsDefaultConfigFile :: IO Test
 loadsDefaultConfigFile = do
   Right cfg <- loadConfiguration Nothing
-  return
+  pure
     ( _connectionString cfg
         ~?= "mooconn"
         .&&. _migrationStorePath cfg
@@ -75,7 +75,7 @@ environmentOverridesProperties = do
   setEnv "DBM_MIGRATION_STORE" "envstore"
   setEnv "DBM_LINEAR_MIGRATIONS" "off"
   Right cfg <- loadConfiguration (Just "cfg1.cfg")
-  return
+  pure
     ( _connectionString cfg
         ~?= "envconn"
         .&&. _migrationStorePath cfg
@@ -91,7 +91,7 @@ ifNoConfigFileIsAvailableEnvironmentIsUsed = do
   setEnv "DBM_MIGRATION_STORE" "envstore"
   setEnv "DBM_LINEAR_MIGRATIONS" "off"
   Right cfg <- loadConfiguration Nothing
-  return
+  pure
     ( _connectionString cfg
         ~?= "envconn"
         .&&. _migrationStorePath cfg
@@ -103,7 +103,7 @@ ifNoConfigFileIsAvailableEnvironmentIsUsed = do
 returnsErrorWhenNotAllPropertiesAreSet :: IO Test
 returnsErrorWhenNotAllPropertiesAreSet = do
   cfg <- loadConfiguration (Just "missing.cfg")
-  satisfies "Should return error" cfg isLeft
+  satisfies "Should pure error" cfg isLeft
 
 throwsWhenConfigFileIsInvalid :: IO Test
 throwsWhenConfigFileIsInvalid = do

@@ -30,7 +30,7 @@ missingMigrations backend storeData = do
   let storeMigrationNames = map mId $ S.storeMigrations storeData
   backendMigrations <- B.getMigrations backend
 
-  return $
+  pure $
     Set.toList $
       Set.difference
         (Set.fromList storeMigrationNames)
@@ -49,12 +49,12 @@ createNewMigration store newM = do
       then
         ( do
             fullPath <- S.fullMigrationName store (mId newM)
-            return $ Left $ "Migration " ++ show fullPath ++ " already exists"
+            pure $ Left $ "Migration " ++ show fullPath ++ " already exists"
         )
       else
         ( do
             S.saveMigration store newM
-            return $ Right newM
+            pure $ Right newM
         )
     )
 
@@ -66,7 +66,7 @@ ensureBootstrappedBackend :: B.Backend -> IO ()
 ensureBootstrappedBackend backend = do
   bsStatus <- B.isBootstrapped backend
   ( if bsStatus
-      then return ()
+      then pure ()
       else B.getBootstrapMigration backend >>= B.applyMigration backend
     )
 
@@ -88,7 +88,7 @@ migrationsToApply storeData backend migration = do
     namesToInstall = [e | e <- deps, e `elem` allMissing]
     loadedMigrations = mapMaybe (S.storeLookup storeData) namesToInstall
 
-  return loadedMigrations
+  pure loadedMigrations
 
 -- | Given a migration mapping computed from a MigrationStore, a
 --  backend, and a migration to revert, return a list of migrations to
@@ -108,4 +108,4 @@ migrationsToRevert storeData backend migration = do
     namesToRevert = [e | e <- rDeps, e `elem` allInstalled]
     loadedMigrations = mapMaybe (S.storeLookup storeData) namesToRevert
 
-  return loadedMigrations
+  pure loadedMigrations

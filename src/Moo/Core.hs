@@ -109,7 +109,7 @@ lcTimestampFilenames c v = c {_lcTimestampFilenames = v}
 (.=) :: Monad m => (a -> Maybe b -> a) -> m (Maybe b) -> m (a -> a)
 (.=) f v' = do
   v <- v'
-  return $ case v of
+  pure $ case v of
     Just _ -> flip f v
     _ -> id
 
@@ -122,7 +122,7 @@ infixl 2 &
 
 applyEnvironment :: ShellEnvironment -> LoadConfig -> IO LoadConfig
 applyEnvironment env lc =
-  return lc
+  pure lc
     & lcConnectionString
     .= f envDatabaseName
     & lcMigrationStorePath
@@ -134,11 +134,11 @@ applyEnvironment env lc =
       .= readFlag
     <$> f envTimestampFilenames
  where
-  f n = return $ lookup n env
+  f n = pure $ lookup n env
 
 applyConfigFile :: Config -> LoadConfig -> IO LoadConfig
 applyConfigFile cfg lc =
-  return lc
+  pure lc
     & lcConnectionString
     .= f envDatabaseName
     & lcMigrationStorePath
@@ -163,7 +163,7 @@ loadConfiguration pth = do
   env <- getEnvironment
   cfg <- applyConfigFile file newLoadConfig >>= applyEnvironment env
 
-  return $ validateLoadConfig cfg
+  pure $ validateLoadConfig cfg
 
 makeParameters :: Configuration -> Backend -> ExecutableParameters
 makeParameters conf backend =

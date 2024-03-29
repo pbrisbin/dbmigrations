@@ -35,7 +35,7 @@ data TestDependable = TD
   deriving stock (Show, Eq, Ord)
 
 satisfies :: String -> a -> (a -> Bool) -> IO Test
-satisfies m v f = return $ TestCase $ assertBool m (f v)
+satisfies m v f = pure $ TestCase $ assertBool m (f v)
 
 (.&&.) :: Test -> Test -> Test
 (TestList xs) .&&. (TestList ys) = TestList (xs ++ ys)

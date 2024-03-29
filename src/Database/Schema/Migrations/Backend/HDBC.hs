@@ -37,7 +37,7 @@ hdbcBackend conn =
     , getBootstrapMigration =
         do
           ts <- getCurrentTime
-          return $
+          pure $
             (newMigration rootMigrationName)
               { mApply = createSql
               , mRevert = Just revertSql
@@ -55,10 +55,10 @@ hdbcBackend conn =
                   <> " (migration_id) VALUES (?)"
             )
             [toSql $ mId m]
-        return ()
+        pure ()
     , revertMigration = \m -> do
         case mRevert m of
-          Nothing -> return ()
+          Nothing -> pure ()
           Just query -> runRaw conn (cs query)
         -- Remove migration from installed_migrations in either case.
         _ <-
@@ -70,11 +70,11 @@ hdbcBackend conn =
                   <> " WHERE migration_id = ?"
             )
             [toSql $ mId m]
-        return ()
+        pure ()
     , getMigrations = do
         results <-
           quickQuery' conn (cs $ "SELECT migration_id FROM " <> migrationTableName) []
-        return $ map (fromSql . head) results
+        pure $ map (fromSql . head) results
     , commitBackend = commit conn
     , rollbackBackend = rollback conn
     , disconnectBackend = disconnect conn

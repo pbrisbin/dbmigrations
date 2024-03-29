@@ -39,7 +39,7 @@ selectsLatestMigrationAsDep = do
   _ <- addTestMigration state1
   state2 <- prepareStateWith state1 "second"
   Right mig <- addTestMigration state2
-  return $ ["first"] ~=? mDeps mig
+  pure $ ["first"] ~=? mDeps mig
 
 selectsOnlyLeavesAsDeps :: IO Test
 selectsOnlyLeavesAsDeps = do
@@ -52,7 +52,7 @@ selectsOnlyLeavesAsDeps = do
   state4' <- prepareStateWith state3 "fourth"
   let state4 = state4' {_appLinearMigrations = True}
   Right mig <- addTestMigration state4
-  return $ ["second", "third"] ~=? mDeps mig
+  pure $ ["second", "third"] ~=? mDeps mig
 
 doesNotAddDependencyWhenLinearMigrationsAreDisabled :: IO Test
 doesNotAddDependencyWhenLinearMigrationsAreDisabled = do
@@ -80,7 +80,7 @@ prepareState :: Text -> IO AppState
 prepareState m = do
   store <- inMemoryStore
   Right storeData <- loadMigrations store
-  return
+  pure
     AppState
       { _appOptions = CommandOptions Nothing False True
       , _appBackend = undefined -- Not used here
@@ -96,9 +96,9 @@ prepareState m = do
 prepareStateWith :: AppState -> Text -> IO AppState
 prepareStateWith state m = do
   Right storeData <- loadMigrations $ _appStore state
-  return state {_appRequiredArgs = [m], _appStoreData = storeData}
+  pure state {_appRequiredArgs = [m], _appStoreData = storeData}
 
 prepareNormalState :: Text -> IO AppState
 prepareNormalState m = do
   state <- prepareState m
-  return $ state {_appLinearMigrations = False}
+  pure $ state {_appLinearMigrations = False}

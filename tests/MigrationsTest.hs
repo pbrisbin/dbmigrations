@@ -22,13 +22,13 @@ testBackend :: [Migration] -> Backend
 testBackend testMs =
   Backend
     { getBootstrapMigration = undefined
-    , isBootstrapped = return True
+    , isBootstrapped = pure True
     , applyMigration = const undefined
     , revertMigration = const undefined
-    , getMigrations = return $ mId <$> testMs
-    , commitBackend = return ()
-    , rollbackBackend = return ()
-    , disconnectBackend = return ()
+    , getMigrations = pure $ mId <$> testMs
+    , commitBackend = pure ()
+    , rollbackBackend = pure ()
+    , disconnectBackend = pure ()
     }
 
 -- | Given a backend and a store, what are the list of migrations
@@ -76,7 +76,7 @@ mkTest (mapping, backend, theMigration, expected) =
   in
     "a test" ~: do
       actual <- result
-      return $ expected == actual
+      pure $ expected == actual
 
 migrationsToApplyTests :: [Test]
 migrationsToApplyTests = map mkTest missingMigrationsTestcases

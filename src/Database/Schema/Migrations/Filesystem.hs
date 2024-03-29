@@ -56,7 +56,7 @@ filesystemStore s =
           migrationFilenames = [f | f <- contents, isMigrationFilename f]
           fullPaths = [(f, storePath s </> f) | f <- migrationFilenames]
         existing <- filterM (\(_, full) -> doesFileExist full) fullPaths
-        return [cs $ dropExtension short | (short, _) <- existing]
+        pure [cs $ dropExtension short | (short, _) <- existing]
     , saveMigration = \m -> do
         filename <- fsFullMigrationName s $ mId m
         BSC.writeFile (cs $ addNewMigrationExtension filename) $ serializeMigration m
@@ -70,7 +70,7 @@ addMigrationExtension path ext = path <> ext
 
 -- | Build path to migrations without extension.
 fsFullMigrationName :: FilesystemStoreSettings -> Text -> IO FilePath
-fsFullMigrationName s name = return $ storePath s </> cs name
+fsFullMigrationName s name = pure $ storePath s </> cs name
 
 isMigrationFilename :: String -> Bool
 isMigrationFilename path = cs (takeExtension path) `elem` [filenameExtension, filenameExtensionTxt]
@@ -84,13 +84,13 @@ migrationFromFile store name =
   fsFullMigrationName store (cs name) >>= migrationFromPath
 
 -- | Given a filesystem path, read and parse the file as a migration
---  return the 'Migration' if successful.  Otherwise return a parsing
+--  pure the 'Migration' if successful.  Otherwise pure a parsing
 --  error message.
 migrationFromPath :: FilePath -> IO (Either String Migration)
 migrationFromPath path = do
   let name = cs $ takeBaseName path
   (Right <$> process name)
-    `catch` ( \(FilesystemStoreError s) -> return $ Left $ "Could not parse migration " ++ path ++ ":" ++ s
+    `catch` ( \(FilesystemStoreError s) -> pure $ Left $ "Could not parse migration " ++ path ++ ":" ++ s
             )
  where
   readMigrationFile = do

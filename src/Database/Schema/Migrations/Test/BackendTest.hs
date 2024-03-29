@@ -42,7 +42,7 @@ testSuite transactDDL =
   [ isBootstrappedFalseTest
   , bootstrapTest
   , isBootstrappedTrueTest
-  , if transactDDL then applyMigrationFailure else const $ return ()
+  , if transactDDL then applyMigrationFailure else const $ pure ()
   , applyMigrationSuccess
   , revertMigrationFailure
   , revertMigrationNothing
@@ -80,7 +80,7 @@ ignoreSqlExceptions conn act =
   catchAll
     conn
     (act <&> Just)
-    (return Nothing)
+    (pure Nothing)
 
 applyMigrationSuccess :: BackendConnection bc => bc -> IO ()
 applyMigrationSuccess conn = do

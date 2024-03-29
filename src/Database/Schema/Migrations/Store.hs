@@ -122,16 +122,16 @@ loadMigrations store = do
             -- Construct a dependency graph and, if that succeeds, return
             -- StoreData.
             case depGraphFromMapping mMap of
-              Left e -> return $ Left [DependencyGraphError e]
+              Left e -> pure $ Left [DependencyGraphError e]
               Right gr ->
-                return $
+                pure $
                   Right
                     StoreData
                       { storeDataMapping = mMap
                       , storeDataGraph = gr
                       }
         )
-      else return $ Left allErrors
+      else pure $ Left allErrors
     )
 
 -- | Validate a migration map.  Returns zero or more validation errors.
@@ -147,7 +147,7 @@ validateSingleMigration mMap m = do
   depId <- depsOf m
   if isJust $ Map.lookup depId mMap
     then mzero
-    else return $ DependencyReferenceError (mId m) depId
+    else pure $ DependencyReferenceError (mId m) depId
 
 -- | Create a 'DependencyGraph' from a 'MigrationMap'; returns Left if
 --  the dependency graph cannot be constructed (e.g., due to a

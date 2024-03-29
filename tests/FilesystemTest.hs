@@ -35,4 +35,4 @@ getMigrationsTest = do
         , "valid_with_multiline_deps"
         ]
   migrations <- getMigrations store
-  return $ expected ~=? Set.fromList migrations
+  pure $ expected ~=? Set.fromList migrations

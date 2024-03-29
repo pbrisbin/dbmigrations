@@ -52,10 +52,10 @@ newCommand storeData = do
     -- Default behavior: ask for dependencies if linear mode is disabled
     deps <-
       if linear
-        then return $ leafMigrations storeData
+        then pure $ leafMigrations storeData
         else
           if noAsk
-            then return []
+            then pure []
             else do
               putStrLn . cs $
                 "Selecting dependencies for new \
@@ -65,7 +65,7 @@ newCommand storeData = do
 
     result <-
       if noAsk
-        then return True
+        then pure True
         else confirmCreation migrationId deps
 
     ( if result
@@ -222,7 +222,7 @@ testCommand storeData = do
     unless (migrationId `elem` migrationNames) $
       do
         _ <- revert m storeData backend
-        return ()
+        pure ()
     applied <- apply m storeData backend True
     forM_ (reverse applied) $ \migration -> do
       revert migration storeData backend

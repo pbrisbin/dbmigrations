@@ -41,8 +41,8 @@ hasCycle' g = do
     m <- getMark n
     case m of
       White -> visit g n
-      _ -> return False
-  return $ or result
+      _ -> pure False
+  pure $ or result
 
 visit :: Graph g => g a b -> Node -> State CycleDetectionState Bool
 visit g n = do
@@ -50,14 +50,14 @@ visit g n = do
   result <- forM [v | (u, v) <- edges g, u == n] $ \node -> do
     m <- getMark node
     case m of
-      Gray -> return True
+      Gray -> pure True
       White -> visit g node
-      _ -> return False
+      _ -> pure False
   ( if or result
-      then return True
+      then pure True
       else
         ( do
             setMark n Black
-            return False
+            pure False
         )
     )
