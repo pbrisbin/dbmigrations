@@ -7,21 +7,7 @@ cabal-version: 1.18
 name:           dbmigrations
 version:        2.1.0
 synopsis:       An implementation of relational database "migrations"
-
-description:    A library and program for the creation, management, and installation of schema
-                updates (called /migrations/) for a relational database. In particular, this
-                package lets the migration author express explicit dependencies between
-                migrations and the management tool automatically installs or reverts
-                migrations accordingly, using transactions for safety.
-                .
-                This package is written to support a number of different databases. For
-                packages that support specific databases using this library, see packages
-                named "dbmigrations-BACKEND". Each package provides an executable
-                "moo-BACKEND" for managing migrations. Usage information for the "moo-"
-                executables can be found in "MOO.TXT" in this package.
-                .
-                This package also includes a conformance test suite to ensure that backend
-                implementations respect the library's required semantics.
+description:    Please see <https://github.com/pbrisbin/dbmigrations#readme>
 category:       Database
 homepage:       https://github.com/pbrisbin/amazonka-s3-sync#readme
 bug-reports:    https://github.com/pbrisbin/amazonka-s3-sync/issues
@@ -55,7 +41,6 @@ extra-source-files:
 extra-doc-files:
     README.md
     CHANGELOG.md
-    MOO.TXT
 
 source-repository head
   type: git

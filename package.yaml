@@ -1,23 +1,7 @@
 name: dbmigrations
 version: 2.1.0
-synopsis: |
-  An implementation of relational database "migrations"
-description: |
-  A library and program for the creation, management, and installation of schema
-  updates (called /migrations/) for a relational database. In particular, this
-  package lets the migration author express explicit dependencies between
-  migrations and the management tool automatically installs or reverts
-  migrations accordingly, using transactions for safety.
-
-  This package is written to support a number of different databases. For
-  packages that support specific databases using this library, see packages
-  named "dbmigrations-BACKEND". Each package provides an executable
-  "moo-BACKEND" for managing migrations. Usage information for the "moo-"
-  executables can be found in "MOO.TXT" in this package.
-
-  This package also includes a conformance test suite to ensure that backend
-  implementations respect the library's required semantics.
-
+synopsis: An implementation of relational database "migrations"
+description: Please see <https://github.com/pbrisbin/dbmigrations#readme>
 author: "Jonathan Daugherty <cygnus@foobox.com>"
 maintainer: "Pat Brisbin <pbrisbin@gmail.com>"
 category: Database
@@ -28,7 +12,6 @@ license-file: LICENSE
 extra-doc-files:
   - README.md
   - CHANGELOG.md
-  - MOO.TXT
 
 extra-source-files:
   - tests/example_store/*
