@@ -136,8 +136,7 @@ test-suite spec
       Common
       CommonTH
       ConfigurationSpec
-      ConfigurationTest
-      CycleDetectionTest
+      CycleDetectionSpec
       DependencyTest
       FilesystemParseTest
       FilesystemSerializeTest
