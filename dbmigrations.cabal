@@ -142,9 +142,8 @@ test-suite spec
       FilesystemSerializeSpec
       FilesystemSpec
       InMemoryStore
-      LinearMigrationsTest
-      Main
-      MigrationsTest
+      LinearMigrationsSpec
+      MigrationsSpec
       StoreTest
       Paths_dbmigrations
   hs-source-dirs:
