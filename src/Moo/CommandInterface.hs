@@ -141,9 +141,9 @@ commandOptionUsage = usageInfo "Options:" commandOptions
 
 usageString :: Command -> String
 usageString command =
-  unwords (_cName command : optionalArgs ++ options ++ requiredArgs)
+  unwords (_cName command : optionalArgs <> options <> requiredArgs)
  where
-  requiredArgs = map (\s -> "<" ++ s ++ ">") $ _cRequired command
-  optionalArgs = map (\s -> "[" ++ s ++ "]") $ _cOptional command
-  options = map (\s -> "[" ++ "--" ++ s ++ "]") optionStrings
+  requiredArgs = map (\s -> "<" <> s <> ">") $ _cRequired command
+  optionalArgs = map (\s -> "[" <> s <> "]") $ _cOptional command
+  options = map (\s -> "[--" <> s <> "]") optionStrings
   optionStrings = _cAllowedOptions command

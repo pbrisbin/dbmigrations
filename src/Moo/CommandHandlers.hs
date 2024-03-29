@@ -46,7 +46,7 @@ newCommand storeData = do
     fullPath <- fullMigrationName store migrationId
     when (isJust $ storeLookup storeData migrationId) $
       do
-        putStrLn $ "Migration " <> show fullPath ++ " already exists"
+        putStrLn $ "Migration " <> show fullPath <> " already exists"
         exitWith (ExitFailure 1)
 
     -- Default behavior: ask for dependencies if linear mode is disabled
@@ -83,7 +83,7 @@ newCommand storeData = do
                 Right _ ->
                   putStrLn $
                     "Migration created successfully: "
-                      ++ show fullPath
+                      <> show fullPath
           )
         else
           ( do

@@ -61,7 +61,7 @@ instance Eq a => Eq (DependencyGraph a) where
 
 instance Show a => Show (DependencyGraph a) where
   show g =
-    "(" ++ show (nodes $ depGraph g) ++ ", " ++ show (edges $ depGraph g) ++ ")"
+    "(" <> show (nodes $ depGraph g) <> ", " <> show (edges $ depGraph g) <> ")"
 
 -- XXX: provide details about detected cycles
 
@@ -125,4 +125,4 @@ dependenciesWith nextNodes dg@(DG _ nMap theGraph) name =
     labels = map getLabel depNodes
     recurse = map (dependenciesWith nextNodes dg)
   in
-    labels ++ concat (recurse labels)
+    labels <> concat (recurse labels)

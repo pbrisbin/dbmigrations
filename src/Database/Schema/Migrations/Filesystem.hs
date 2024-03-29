@@ -90,7 +90,7 @@ migrationFromPath :: FilePath -> IO (Either String Migration)
 migrationFromPath path = do
   let name = cs $ takeBaseName path
   (Right <$> process name)
-    `catch` ( \(FilesystemStoreError s) -> pure $ Left $ "Could not parse migration " ++ path ++ ":" ++ s
+    `catch` ( \(FilesystemStoreError s) -> pure $ Left $ "Could not parse migration " <> path <> ":" <> s
             )
  where
   readMigrationFile = do

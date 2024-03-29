@@ -79,11 +79,11 @@ data MapValidationError
 
 instance Show MapValidationError where
   show (DependencyReferenceError from to) =
-    "Migration " ++ show from ++ " references nonexistent dependency " ++ show to
+    "Migration " <> show from <> " references nonexistent dependency " <> show to
   show (DependencyGraphError msg) =
-    "There was an error constructing the dependency graph: " ++ msg
+    "There was an error constructing the dependency graph: " <> msg
   show (InvalidMigration msg) =
-    "There was an error loading a migration: " ++ msg
+    "There was an error loading a migration: " <> msg
 
 -- | A convenience function for extracting the list of 'Migration's
 --  extant in the specified 'StoreData'.
@@ -110,7 +110,7 @@ loadMigrations store = do
     mMap = Map.fromList $ [(mId e, e) | e <- loaded]
     validationErrors = validateMigrationMap mMap
     (loaded, loadErrors) = sortResults loadedWithErrors ([], [])
-    allErrors = validationErrors ++ (InvalidMigration <$> loadErrors)
+    allErrors = validationErrors <> (InvalidMigration <$> loadErrors)
 
     sortResults [] v = v
     sortResults (Left e : rest) (ms, es) = sortResults rest (ms, e : es)
