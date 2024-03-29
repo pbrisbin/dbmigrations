@@ -131,20 +131,20 @@ library
 
 test-suite spec
   type: exitcode-stdio-1.0
-  main-is: Main.hs
+  main-is: Spec.hs
   other-modules:
       Common
       CommonTH
-      ConfigurationTest
-      CycleDetectionTest
-      DependencyTest
-      FilesystemParseTest
-      FilesystemSerializeTest
-      FilesystemTest
+      ConfigurationSpec
+      CycleDetectionSpec
+      DependencySpec
+      FilesystemParseSpec
+      FilesystemSerializeSpec
+      FilesystemSpec
       InMemoryStore
-      LinearMigrationsTest
-      MigrationsTest
-      StoreTest
+      LinearMigrationsSpec
+      MigrationsSpec
+      StoreSpec
       Paths_dbmigrations
   hs-source-dirs:
       tests
@@ -176,12 +176,12 @@ test-suite spec
   build-depends:
       HUnit
     , base <5
-    , bytestring
     , containers
     , dbmigrations
     , directory
     , fgl
     , filepath
+    , hspec
     , mtl
     , string-conversions
     , template-haskell

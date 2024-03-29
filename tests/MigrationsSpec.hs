@@ -1,22 +1,34 @@
 {-# OPTIONS_GHC -Wno-incomplete-uni-patterns #-}
 
-module MigrationsTest
-  ( tests
+module MigrationsSpec
+  ( spec
   )
 where
 
 import Prelude
 
+import Data.Foldable (for_)
 import Data.Map qualified as Map
 import Data.Time.Clock (UTCTime)
 import Database.Schema.Migrations
 import Database.Schema.Migrations.Backend
 import Database.Schema.Migrations.Migration
 import Database.Schema.Migrations.Store hiding (getMigrations)
-import Test.HUnit
+import Test.Hspec
 
-tests :: [Test]
-tests = migrationsToApplyTests
+spec :: Spec
+spec = do
+  describe "migrationsToApply" $ do
+    for_ missingMigrationsTestcases $ \(mapping, backend, mig, expected) -> do
+      let
+        Right graph = depGraphFromMapping mapping
+        storeData = StoreData mapping graph
+        withDeps = case mDeps mig of
+          [] -> ""
+          ds -> " with deps " <> show ds
+
+      it ("migration " <> show (mId mig) <> withDeps) $ do
+        migrationsToApply storeData backend mig `shouldReturn` expected
 
 testBackend :: [Migration] -> Backend
 testBackend testMs =
@@ -66,17 +78,3 @@ missingMigrationsTestcases =
   one = blankMigration {mId = "one"}
   two = blankMigration {mId = "two", mDeps = ["one"]}
   m = Map.fromList [(mId e, e) | e <- [one, two]]
-
-mkTest :: MissingMigrationTestCase -> Test
-mkTest (mapping, backend, theMigration, expected) =
-  let
-    Right graph = depGraphFromMapping mapping
-    storeData = StoreData mapping graph
-    result = migrationsToApply storeData backend theMigration
-  in
-    "a test" ~: do
-      actual <- result
-      pure $ expected == actual
-
-migrationsToApplyTests :: [Test]
-migrationsToApplyTests = map mkTest missingMigrationsTestcases

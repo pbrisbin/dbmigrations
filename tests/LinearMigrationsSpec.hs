@@ -1,13 +1,12 @@
 {-# OPTIONS_GHC -Wno-incomplete-uni-patterns #-}
 
-module LinearMigrationsTest
-  ( tests
+module LinearMigrationsSpec
+  ( spec
   )
 where
 
 import Prelude
 
-import Common
 import Control.Monad.Reader (runReaderT)
 import Data.Either (isRight)
 import Data.Text (Text)
@@ -16,51 +15,45 @@ import Database.Schema.Migrations.Store
 import InMemoryStore
 import Moo.CommandHandlers
 import Moo.Core
-import Test.HUnit
+import Test.Hspec
 
-tests :: IO [Test]
-tests =
-  sequence
-    [ addsMigration
-    , selectsLatestMigrationAsDep
-    , selectsOnlyLeavesAsDeps
-    , doesNotAddDependencyWhenLinearMigrationsAreDisabled
-    ]
+spec :: Spec
+spec = do
+  describe "linear migrations" $ do
+    it "addsMigration" $ do
+      state <- prepareState "first"
+      mig <- addTestMigration state
 
-addsMigration :: IO Test
-addsMigration = do
-  state <- prepareState "first"
-  mig <- addTestMigration state
-  satisfies "Migration not added" mig isRight
+      mig `shouldSatisfy` isRight
 
-selectsLatestMigrationAsDep :: IO Test
-selectsLatestMigrationAsDep = do
-  state1 <- prepareState "first"
-  _ <- addTestMigration state1
-  state2 <- prepareStateWith state1 "second"
-  Right mig <- addTestMigration state2
-  pure $ ["first"] ~=? mDeps mig
+    it "selectsLatestMigrationAsDep" $ do
+      state1 <- prepareState "first"
+      _ <- addTestMigration state1
+      state2 <- prepareStateWith state1 "second"
+      Right mig <- addTestMigration state2
 
-selectsOnlyLeavesAsDeps :: IO Test
-selectsOnlyLeavesAsDeps = do
-  state1 <- prepareNormalState "first"
-  addTestMigrationWithDeps state1 []
-  state2 <- prepareStateWith state1 "second"
-  addTestMigrationWithDeps state2 ["first"]
-  state3 <- prepareStateWith state2 "third"
-  addTestMigrationWithDeps state3 ["first"]
-  state4' <- prepareStateWith state3 "fourth"
-  let state4 = state4' {_appLinearMigrations = True}
-  Right mig <- addTestMigration state4
-  pure $ ["second", "third"] ~=? mDeps mig
+      mDeps mig `shouldBe` ["first"]
 
-doesNotAddDependencyWhenLinearMigrationsAreDisabled :: IO Test
-doesNotAddDependencyWhenLinearMigrationsAreDisabled = do
-  state1 <- prepareNormalState "first"
-  _ <- addTestMigration state1
-  state2 <- prepareStateWith state1 "second"
-  Right mig <- addTestMigration state2
-  satisfies "Dependencies should be empty" (mDeps mig) null
+    it "selectsOnlyLeavesAsDeps" $ do
+      state1 <- prepareNormalState "first"
+      addTestMigrationWithDeps state1 []
+      state2 <- prepareStateWith state1 "second"
+      addTestMigrationWithDeps state2 ["first"]
+      state3 <- prepareStateWith state2 "third"
+      addTestMigrationWithDeps state3 ["first"]
+      state4' <- prepareStateWith state3 "fourth"
+      let state4 = state4' {_appLinearMigrations = True}
+      Right mig <- addTestMigration state4
+
+      mDeps mig `shouldBe` ["second", "third"]
+
+    it "doesNotAddDependencyWhenLinearMigrationsAreDisabled" $ do
+      state1 <- prepareNormalState "first"
+      _ <- addTestMigration state1
+      state2 <- prepareStateWith state1 "second"
+      Right mig <- addTestMigration state2
+
+      mDeps mig `shouldSatisfy` null
 
 addTestMigration :: AppState -> IO (Either String Migration)
 addTestMigration state = do
