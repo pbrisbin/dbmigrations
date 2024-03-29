@@ -1,0 +1,137 @@
+name: dbmigrations
+version: 2.1.0
+synopsis: |
+  An implementation of relational database "migrations"
+description: |
+  A library and program for the creation, management, and installation of schema
+  updates (called /migrations/) for a relational database. In particular, this
+  package lets the migration author express explicit dependencies between
+  migrations and the management tool automatically installs or reverts
+  migrations accordingly, using transactions for safety.
+
+  This package is written to support a number of different databases. For
+  packages that support specific databases using this library, see packages
+  named "dbmigrations-BACKEND". Each package provides an executable
+  "moo-BACKEND" for managing migrations. Usage information for the "moo-"
+  executables can be found in "MOO.TXT" in this package.
+
+  This package also includes a conformance test suite to ensure that backend
+  implementations respect the library's required semantics.
+
+author: "Jonathan Daugherty <cygnus@foobox.com>"
+maintainer: "Pat Brisbin <pbrisbin@gmail.com>"
+category: Database
+github: pbrisbin/amazonka-s3-sync
+license: BSD3
+license-file: LICENSE
+
+extra-doc-files:
+  - README.md
+  - CHANGELOG.md
+  - MOO.TXT
+
+extra-source-files:
+  - tests/example_store/*
+  - tests/config_loading/*
+  - tests/migration_parsing/*
+
+ghc-options:
+  - -Weverything
+  - -Wno-all-missed-specialisations
+  - -Wno-missed-specialisations
+  - -Wno-missing-exported-signatures # re-enables missing-signatures
+  - -Wno-missing-import-lists
+  - -Wno-missing-local-signatures
+  - -Wno-monomorphism-restriction
+  - -Wno-safe
+  - -Wno-unsafe
+
+dependencies:
+  - base < 5
+
+language: GHC2021
+default-extensions:
+  - BangPatterns
+  - DataKinds
+  - DeriveAnyClass
+  - DeriveFoldable
+  - DeriveFunctor
+  - DeriveGeneric
+  - DeriveLift
+  - DeriveTraversable
+  - DerivingStrategies
+  - FlexibleContexts
+  - FlexibleInstances
+  - GADTs
+  - GeneralizedNewtypeDeriving
+  - LambdaCase
+  - MultiParamTypeClasses
+  - NoImplicitPrelude
+  - NoMonomorphismRestriction
+  - OverloadedStrings
+  - RankNTypes
+  - ScopedTypeVariables
+  - StandaloneDeriving
+  - TypeApplications
+  - TypeFamilies
+
+  # Soon
+  # - DuplicateRecordFields
+  # - NoFieldSelectors
+  # - OverloadedRecordDot
+
+library:
+  source-dirs: src
+  dependencies:
+   - HDBC
+   - HUnit
+   - aeson
+   - bytestring
+   - configurator
+   - containers
+   - directory
+   - fgl
+   - filepath
+   - mtl
+   - random
+   - split
+   - string-conversions
+   - template-haskell
+   - text
+   - time
+   - unordered-containers
+   - yaml
+
+tests:
+  spec:
+    source-dirs: tests
+    ghc-options: -threaded -rtsopts "-with-rtsopts=-N"
+    main: Main.hs
+    dependencies:
+      - HDBC
+      - HUnit
+      - MissingH
+      - bytestring
+      - configurator
+      - containers
+      - dbmigrations
+      - directory
+      - fgl
+      - filepath
+      - mtl
+      - process
+      - split
+      - string-conversions
+      - template-haskell
+      - text
+      - time
+      - yaml
+
+executables:
+  moo:
+    source-dirs: app
+    main: Main.hs
+    ghc-options: -threaded -rtsopts "-with-rtsopts=-N"
+    dependencies:
+      - configurator
+      - dbmigrations
