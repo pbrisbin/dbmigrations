@@ -133,15 +133,15 @@ _In the examples below, replace any `moo` command shown with `moo-<backend>`._
 
 <!-- prettier-ignore-end -->
 
-   ```console
-   % moo apply hello-world
-   Applying: hello-world... done.
-   Successfully applied migrations.
+```console
+% moo apply hello-world
+Applying: hello-world... done.
+Successfully applied migrations.
 
-   % moo upgrade
-   Applying: hello-world... done.
-   Database successfully upgraded.
-   ```
+% moo upgrade
+Applying: hello-world... done.
+Database successfully upgraded.
+```
 
 9. List installed migrations with `moo list`.
 
