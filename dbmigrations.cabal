@@ -131,10 +131,11 @@ library
 
 test-suite spec
   type: exitcode-stdio-1.0
-  main-is: Main.hs
+  main-is: Spec.hs
   other-modules:
       Common
       CommonTH
+      ConfigurationSpec
       ConfigurationTest
       CycleDetectionTest
       DependencyTest
@@ -143,6 +144,7 @@ test-suite spec
       FilesystemTest
       InMemoryStore
       LinearMigrationsTest
+      Main
       MigrationsTest
       StoreTest
       Paths_dbmigrations
@@ -182,6 +184,7 @@ test-suite spec
     , directory
     , fgl
     , filepath
+    , hspec
     , mtl
     , string-conversions
     , template-haskell

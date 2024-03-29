@@ -110,7 +110,7 @@ tests:
   spec:
     source-dirs: tests
     ghc-options: -threaded -rtsopts "-with-rtsopts=-N"
-    main: Main.hs
+    main: Spec.hs
     dependencies:
       - HUnit
       - bytestring
@@ -119,6 +119,7 @@ tests:
       - directory
       - fgl
       - filepath
+      - hspec
       - mtl
       - string-conversions
       - template-haskell
