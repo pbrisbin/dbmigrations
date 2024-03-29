@@ -2,19 +2,41 @@
 -- acts as a conformance test suit for database specific backend
 -- implementations. All backend specific executable packages are expected to
 -- have a test suite that runs this test.
+--
+-- Usage:
+--
+-- @
+-- module MyBackendSpec
+--   ( spec
+--   )
+-- where
+--
+-- import Database.Schema.Migrations.Test.BackendTest hiding (spec)
+-- import Database.Schema.Migrations.Test.BackendTest qualified as BackendTest
+-- import MyBackend
+-- import Test.Hspec
+--
+-- instance BackendConnection MyBackendConnection where
+--   -- ...
+--
+-- newConnection :: IO MyBackendConnection
+-- newConnection = undefined
+--
+-- spec :: Spec
+-- spec = before newConnection BackendTest.spec
+-- @
 module Database.Schema.Migrations.Test.BackendTest
   ( BackendConnection (..)
-  , tests
+  , spec
   ) where
 
 import Prelude
 
-import Control.Monad (forM_)
+import Control.Monad (void)
 import Data.ByteString (ByteString)
-import Data.Functor ((<&>))
 import Database.Schema.Migrations.Backend (Backend (..))
 import Database.Schema.Migrations.Migration (Migration (..), newMigration)
-import Test.HUnit
+import Test.Hspec
 
 -- | A typeclass for database connections that needs to implemented for each
 -- specific database type to use this test.
@@ -37,164 +59,140 @@ class BackendConnection c where
   -- | Returns a backend instance.
   makeBackend :: c -> Backend
 
-testSuite :: BackendConnection bc => Bool -> [bc -> IO ()]
-testSuite transactDDL =
-  [ isBootstrappedFalseTest
-  , bootstrapTest
-  , isBootstrappedTrueTest
-  , if transactDDL then applyMigrationFailure else const $ pure ()
-  , applyMigrationSuccess
-  , revertMigrationFailure
-  , revertMigrationNothing
-  , revertMigrationJust
-  ]
+spec :: BackendConnection bc => SpecWith bc
+spec = do
+  it "successfully bootstraps" $ \conn -> do
+    -- This should be false pre-bootstrap
+    isBootstrapped (makeBackend conn) `shouldReturn` False
 
-tests :: BackendConnection bc => bc -> IO ()
-tests conn = do
-  let acts = testSuite $ supportsTransactionalDDL conn
-  forM_ acts $ \act -> do
-    commit conn
-    act conn
+    let backend = makeBackend conn
+    bs <- getBootstrapMigration backend
+    applyMigration backend bs
 
-bootstrapTest :: BackendConnection bc => bc -> IO ()
-bootstrapTest conn = do
-  let backend = makeBackend conn
-  bs <- getBootstrapMigration backend
-  applyMigration backend bs
-  assertEqual "installed_migrations table exists" ["installed_migrations"]
-    =<< getTables conn
-  assertEqual "successfully bootstrapped" [mId bs] =<< getMigrations backend
+    -- This should be true now
+    isBootstrapped (makeBackend conn) `shouldReturn` False
 
-isBootstrappedTrueTest :: BackendConnection bc => bc -> IO ()
-isBootstrappedTrueTest conn = do
-  result <- isBootstrapped $ makeBackend conn
-  assertBool "Bootstrapped check" result
+    getTables conn `shouldReturn` ["installed_migrations"]
+    getMigrations backend `shouldReturn` [mId bs]
 
-isBootstrappedFalseTest :: BackendConnection bc => bc -> IO ()
-isBootstrappedFalseTest conn = do
-  result <- isBootstrapped $ makeBackend conn
-  assertBool "Bootstrapped check" $ not result
+  it "migrates in a transaction" $ needDDL $ \conn -> do
+    let
+      backend = makeBackend conn
 
-ignoreSqlExceptions :: BackendConnection bc => bc -> IO a -> IO (Maybe a)
-ignoreSqlExceptions conn act =
-  catchAll
-    conn
-    (act <&> Just)
-    (pure Nothing)
-
-applyMigrationSuccess :: BackendConnection bc => bc -> IO ()
-applyMigrationSuccess conn = do
-  let backend = makeBackend conn
-
-  let m1 = (newMigration "validMigration") {mApply = "CREATE TABLE valid1 (a int)"}
-
-  -- Apply the migrations, ignore exceptions
-  withTransaction conn $ \conn' -> applyMigration (makeBackend conn') m1
-
-  -- Check that none of the migrations were installed
-  assertEqual "Installed migrations" ["root", "validMigration"]
-    =<< getMigrations backend
-  assertEqual "Installed tables" ["installed_migrations", "valid1"]
-    =<< getTables conn
-
--- | Does a failure to apply a migration imply a transaction rollback?
-applyMigrationFailure :: BackendConnection bc => bc -> IO ()
-applyMigrationFailure conn = do
-  let backend = makeBackend conn
-
-  let
-    m1 = (newMigration "second") {mApply = "CREATE TABLE validButTemporary (a int)"}
-    m2 = (newMigration "third") {mApply = "INVALID SQL"}
-
-  -- Apply the migrations, ignore exceptions
-  _ <- ignoreSqlExceptions conn $ withTransaction conn $ \conn' -> do
-    let backend' = makeBackend conn'
-    applyMigration backend' m1
-    applyMigration backend' m2
-
-  -- Check that none of the migrations were installed
-  assertEqual "Installed migrations" ["root"] =<< getMigrations backend
-  assertEqual "Installed tables" ["installed_migrations"] =<< getTables conn
-
-revertMigrationFailure :: BackendConnection bc => bc -> IO ()
-revertMigrationFailure conn = do
-  let backend = makeBackend conn
-
-  let
-    m1 =
-      (newMigration "second")
-        { mApply = "CREATE TABLE validRMF (a int)"
-        , mRevert = Just "DROP TABLE validRMF"
-        }
-    m2 =
-      (newMigration "third")
-        { mApply = "alter table validRMF add column b int"
-        , mRevert = Just "INVALID REVERT SQL"
-        }
-
-  applyMigration backend m1
-  applyMigration backend m2
-
-  installedBeforeRevert <- getMigrations backend
-
-  commitBackend backend
-
-  -- Revert the migrations, ignore exceptions; the revert will fail,
-  -- but withTransaction will roll back.
-  _ <- ignoreSqlExceptions conn $ withTransaction conn $ \conn' -> do
-    let backend' = makeBackend conn'
-    revertMigration backend' m2
-    revertMigration backend' m1
-
-  -- Check that none of the migrations were reverted
-  assertEqual "successfully roll back failed revert" installedBeforeRevert
-    =<< getMigrations backend
-
-revertMigrationNothing :: BackendConnection bc => bc -> IO ()
-revertMigrationNothing conn = do
-  let backend = makeBackend conn
-
-  let m1 =
+      m1 =
         (newMigration "second")
-          { mApply = "create table revert_nothing (a int)"
-          , mRevert = Nothing
+          { mApply = "CREATE TABLE validButTemporary (a int)"
+          }
+      m2 =
+        (newMigration "third")
+          { mApply = "INVALID SQL"
           }
 
-  applyMigration backend m1
+    ignoreSqlExceptions_ conn $ withTransaction conn $ \conn' -> do
+      let backend' = makeBackend conn'
+      applyMigration backend' m1
+      applyMigration backend' m2
 
-  installedAfterApply <- getMigrations backend
-  assertBool "Check that the migration was applied" $
-    "second" `elem` installedAfterApply
+    getTables conn `shouldReturn` ["installed_migrations"]
+    getMigrations backend `shouldReturn` ["root"]
 
-  -- Revert the migration, which should do nothing EXCEPT remove it
-  -- from the installed list
-  revertMigration backend m1
-
-  installed <- getMigrations backend
-  assertBool "Check that the migration was reverted" $
-    notElem "second" installed
-
-revertMigrationJust :: BackendConnection bc => bc -> IO ()
-revertMigrationJust conn = do
-  let
-    name = "revertable"
-    backend = makeBackend conn
-
-  let m1 =
-        (newMigration name)
-          { mApply = "CREATE TABLE the_test_table (a int)"
-          , mRevert = Just "DROP TABLE the_test_table"
+  it "applies migrations" $ needDDL $ \conn -> do
+    let
+      backend = makeBackend conn
+      m1 =
+        (newMigration "validMigration")
+          { mApply = "CREATE TABLE valid1 (a int)"
           }
 
-  applyMigration backend m1
+    withTransaction conn $ \conn' -> do
+      applyMigration (makeBackend conn') m1
 
-  installedAfterApply <- getMigrations backend
-  assertBool "Check that the migration was applied" $
-    name `elem` installedAfterApply
+    getTables conn `shouldReturn` ["installed_migrations", "valid1"]
+    getMigrations backend `shouldReturn` ["root", "validMigration"]
 
-  -- Revert the migration, which should do nothing EXCEPT remove it
-  -- from the installed list
-  revertMigration backend m1
+  context "revertMigration" $ do
+    it "handles failure to revert" $ needDDL $ \conn -> do
+      let
+        backend = makeBackend conn
+        m1 =
+          (newMigration "second")
+            { mApply = "CREATE TABLE validRMF (a int)"
+            , mRevert = Just "DROP TABLE validRMF"
+            }
+        m2 =
+          (newMigration "third")
+            { mApply = "alter table validRMF add column b int"
+            , mRevert = Just "INVALID REVERT SQL"
+            }
 
-  installed <- getMigrations backend
-  assertBool "Check that the migration was reverted" $ notElem name installed
+      applyMigration backend m1
+      applyMigration backend m2
+
+      installedBeforeRevert <- getMigrations backend
+      commitBackend backend
+
+      -- Revert the migrations, ignore exceptions; the revert will fail, but
+      -- withTransaction will roll back.
+      ignoreSqlExceptions_ conn $ withTransaction conn $ \conn' -> do
+        let backend' = makeBackend conn'
+        revertMigration backend' m2
+        revertMigration backend' m1
+
+      getMigrations backend `shouldReturn` installedBeforeRevert
+
+    it "runs the Revert SQL" $ \conn -> do
+      let
+        name = "revertable"
+        backend = makeBackend conn
+        m1 =
+          (newMigration name)
+            { mApply = "CREATE TABLE the_test_table (a int)"
+            , mRevert = Just "DROP TABLE the_test_table"
+            }
+
+      applyMigration backend m1
+
+      installedAfterApply <- getMigrations backend
+      installedAfterApply `shouldSatisfy` (name `elem`)
+
+      revertMigration backend m1
+
+      tables <- getTables conn
+      tables `shouldNotSatisfy` ("the_test_table" `elem`) -- dropped
+      installed <- getMigrations backend
+      installed `shouldNotSatisfy` (name `elem`)
+
+    it "removes the migration even if there's no Revert SQL" $ \conn -> do
+      let
+        name = "second"
+        backend = makeBackend conn
+        m1 =
+          (newMigration name)
+            { mApply = "create table revert_nothing (a int)"
+            , mRevert = Nothing
+            }
+
+      applyMigration backend m1
+
+      installedAfterApply <- getMigrations backend
+      installedAfterApply `shouldSatisfy` (name `elem`)
+
+      revertMigration backend m1
+
+      tables <- getTables conn
+      tables `shouldSatisfy` ("revert_nothing" `elem`) -- still here
+      installed <- getMigrations backend
+      installed `shouldNotSatisfy` (name `elem`)
+
+-- | Wrap a spec that requires transactional DDL and mark it pending if the
+-- backend does not support that.
+needDDL :: BackendConnection bc => (bc -> Expectation) -> bc -> Expectation
+needDDL f conn
+  | supportsTransactionalDDL conn =
+      pendingWith "Skipping due to lack of Transactional DDL"
+  | otherwise = f conn
+
+ignoreSqlExceptions_ :: BackendConnection bc => bc -> IO a -> IO ()
+ignoreSqlExceptions_ conn act = void act `catch` pure ()
+ where
+  catch = catchAll conn

@@ -94,7 +94,6 @@ library
   ghc-options: -fwrite-ide-info -Weverything -Wno-all-missed-specialisations -Wno-missed-specialisations -Wno-missing-exported-signatures -Wno-missing-import-lists -Wno-missing-local-signatures -Wno-monomorphism-restriction -Wno-safe -Wno-unsafe
   build-depends:
       HDBC
-    , HUnit
     , aeson
     , base <5
     , bytestring
@@ -103,6 +102,7 @@ library
     , directory
     , fgl
     , filepath
+    , hspec
     , mtl
     , string-conversions
     , text
