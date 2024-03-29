@@ -129,9 +129,7 @@ applyEnvironment env lc =
     .= f envStoreName
     & lcLinearMigrations
     .= readFlag
-    <$> f envLinearMigrations
-      & lcTimestampFilenames
-      .= readFlag
+    <$> f envLinearMigrations & lcTimestampFilenames .= readFlag
     <$> f envTimestampFilenames
  where
   f n = pure $ lookup n env
