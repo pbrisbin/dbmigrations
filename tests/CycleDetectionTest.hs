@@ -26,7 +26,11 @@ withCycleComplex :: Gr String String
 withCycleComplex =
   mkGraph
     [(1, "one"), (2, "two"), (3, "three"), (4, "four")]
-    [(4, 1, "four->one"), (1, 2, "one->two"), (2, 3, "two->three"), (3, 1, "three->one")]
+    [ (4, 1, "four->one")
+    , (1, 2, "one->two")
+    , (2, 3, "two->three")
+    , (3, 1, "three->one")
+    ]
 
 withCycleRadial :: Gr String String
 withCycleRadial =

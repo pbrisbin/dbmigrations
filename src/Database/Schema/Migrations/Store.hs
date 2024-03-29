@@ -1,5 +1,3 @@
-{-# LANGUAGE MultiParamTypeClasses #-}
-
 -- | This module provides an abstraction for a /migration store/, a
 --  facility in which 'Migration's can be stored and from which they
 --  can be loaded.  This module also provides functions for taking

@@ -1,6 +1,3 @@
-{-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE TypeSynonymInstances #-}
-
 -- | This module types and functions for representing a dependency
 --  graph of arbitrary objects and functions for querying such graphs
 --  to get dependency and reverse dependency information.

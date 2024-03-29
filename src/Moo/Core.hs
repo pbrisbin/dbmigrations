@@ -1,5 +1,3 @@
-{-# LANGUAGE ExistentialQuantification #-}
-
 module Moo.Core
   ( AppT
   , CommandHandler

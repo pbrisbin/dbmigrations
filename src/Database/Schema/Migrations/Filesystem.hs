@@ -1,8 +1,3 @@
-{-# LANGUAGE DeriveGeneric #-}
-{-# LANGUAGE LambdaCase #-}
-{-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE ScopedTypeVariables #-}
-
 -- | This module provides a type for interacting with a
 --  filesystem-backed 'MigrationStore'.
 module Database.Schema.Migrations.Filesystem

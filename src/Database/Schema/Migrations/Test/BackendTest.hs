@@ -1,5 +1,3 @@
-{-# LANGUAGE OverloadedStrings #-}
-
 -- | A test that is not executed as part of this package's test suite but rather
 -- acts as a conformance test suit for database specific backend
 -- implementations. All backend specific executable packages are expected to

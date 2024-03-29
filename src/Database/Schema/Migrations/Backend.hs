@@ -1,5 +1,3 @@
-{-# LANGUAGE OverloadedStrings #-}
-
 module Database.Schema.Migrations.Backend
   ( Backend (..)
   , rootMigrationName

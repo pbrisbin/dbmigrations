@@ -1,5 +1,3 @@
-{-# LANGUAGE OverloadedStrings #-}
-
 module Database.Schema.Migrations.Filesystem.Serialize
   ( serializeMigration
   )
