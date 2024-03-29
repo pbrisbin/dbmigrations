@@ -139,7 +139,7 @@ test-suite spec
       CycleDetectionSpec
       DependencySpec
       FilesystemParseSpec
-      FilesystemSerializeTest
+      FilesystemSerializeSpec
       FilesystemTest
       InMemoryStore
       LinearMigrationsTest
