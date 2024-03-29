@@ -2,10 +2,7 @@
 
 module Common
   ( TestDependable (..)
-  , repoRoot
   , testFile
-  , satisfies
-  , (.&&.)
   )
 where
 
@@ -33,13 +30,3 @@ data TestDependable = TD
   , tdDeps :: [Text]
   }
   deriving stock (Show, Eq, Ord)
-
-satisfies :: String -> a -> (a -> Bool) -> IO Test
-satisfies m v f = pure $ TestCase $ assertBool m (f v)
-
-(.&&.) :: Test -> Test -> Test
-(TestList xs) .&&. (TestList ys) = TestList (xs ++ ys)
-(TestList xs) .&&. y = TestList (xs ++ [y])
-x .&&. (TestList ys) = TestList (x : ys)
-a .&&. b = TestList [a, b]
-infixl 0 .&&.
