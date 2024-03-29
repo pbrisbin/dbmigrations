@@ -1,2 +1,10 @@
-roots = [ "^Main\\.main$", "^Paths_dbmigrations\\..*$", "^Spec\\.main$" ]
+roots = [
+  "^Database\\.Schema\\.Migrations\\.Backend\\.HDBC\\.hdbcBackend$",
+  "^Database\\.Schema\\.Migrations\\.Test\\.BackendTest\\..*$",
+  "^Main\\.main$",
+  "^Moo\\.Core\\.makeParameters$",
+  "^Moo\\.Main\\..*$",
+  "^Paths_dbmigrations\\..*$",
+  "^Spec\\.main$"
+]
 type-class-roots = true
