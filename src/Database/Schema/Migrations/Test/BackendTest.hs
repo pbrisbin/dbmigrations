@@ -70,15 +70,15 @@ spec = do
     applyMigration backend bs
 
     -- This should be true now
-    isBootstrapped (makeBackend conn) `shouldReturn` False
+    isBootstrapped (makeBackend conn) `shouldReturn` True
 
     getTables conn `shouldReturn` ["installed_migrations"]
     getMigrations backend `shouldReturn` [mId bs]
 
   it "migrates in a transaction" $ needDDL $ \conn -> do
-    let
-      backend = makeBackend conn
+    backend <- makeBootstrappedBackend conn
 
+    let
       m1 =
         (newMigration "second")
           { mApply = "CREATE TABLE validButTemporary (a int)"
@@ -112,8 +112,9 @@ spec = do
 
   context "revertMigration" $ do
     it "handles failure to revert" $ needDDL $ \conn -> do
+      backend <- makeBootstrappedBackend conn
+
       let
-        backend = makeBackend conn
         m1 =
           (newMigration "second")
             { mApply = "CREATE TABLE validRMF (a int)"
@@ -141,9 +142,10 @@ spec = do
       getMigrations backend `shouldReturn` installedBeforeRevert
 
     it "runs the Revert SQL" $ \conn -> do
+      backend <- makeBootstrappedBackend conn
+
       let
         name = "revertable"
-        backend = makeBackend conn
         m1 =
           (newMigration name)
             { mApply = "CREATE TABLE the_test_table (a int)"
@@ -163,9 +165,10 @@ spec = do
       installed `shouldNotSatisfy` (name `elem`)
 
     it "removes the migration even if there's no Revert SQL" $ \conn -> do
+      backend <- makeBootstrappedBackend conn
+
       let
         name = "second"
-        backend = makeBackend conn
         m1 =
           (newMigration name)
             { mApply = "create table revert_nothing (a int)"
@@ -183,6 +186,12 @@ spec = do
       tables `shouldSatisfy` ("revert_nothing" `elem`) -- still here
       installed <- getMigrations backend
       installed `shouldNotSatisfy` (name `elem`)
+
+makeBootstrappedBackend :: BackendConnection bc => bc -> IO Backend
+makeBootstrappedBackend conn = do
+  let backend = makeBackend conn
+  bs <- getBootstrapMigration backend
+  backend <$ applyMigration backend bs
 
 -- | Wrap a spec that requires transactional DDL and mark it pending if the
 -- backend does not support that.

@@ -1,24 +1,29 @@
 module Database.Schema.Migrations.Backend.HDBC
   ( hdbcBackend
+  , HDBCConnection (..)
   )
 where
 
 import Prelude
 
+import Control.Exception (catch)
 import Data.String.Conversions (cs)
 import Data.Text (Text)
 import Data.Time.Clock (getCurrentTime)
 import Database.HDBC
   ( IConnection (getTables, run, runRaw)
+  , SqlError
   , commit
   , disconnect
   , fromSql
   , quickQuery'
   , rollback
   , toSql
+  , withTransaction
   )
 import Database.Schema.Migrations.Backend (Backend (..), rootMigrationName)
 import Database.Schema.Migrations.Migration (Migration (..), newMigration)
+import Database.Schema.Migrations.Test.BackendTest qualified as BackendTest
 
 migrationTableName :: Text
 migrationTableName = "installed_migrations"
@@ -79,3 +84,15 @@ hdbcBackend conn =
     , rollbackBackend = rollback conn
     , disconnectBackend = disconnect conn
     }
+
+-- | For newtype deriving any HDBC-compatible connection
+newtype HDBCConnection a = HDBCConnection a
+
+instance IConnection a => BackendTest.BackendConnection (HDBCConnection a) where
+  supportsTransactionalDDL = const True
+  makeBackend (HDBCConnection c) = hdbcBackend c
+  commit (HDBCConnection c) = commit c
+  withTransaction (HDBCConnection c) transaction =
+    withTransaction c (transaction . HDBCConnection)
+  getTables (HDBCConnection c) = map cs <$> getTables c
+  catchAll (HDBCConnection _) act handler = act `catch` \(_ :: SqlError) -> handler

@@ -96,6 +96,8 @@ tests:
     ghc-options: -threaded -rtsopts "-with-rtsopts=-N"
     main: Spec.hs
     dependencies:
+      - HDBC
+      - HDBC-sqlite3
       - containers
       - dbmigrations
       - directory
