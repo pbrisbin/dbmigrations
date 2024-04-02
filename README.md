@@ -4,7 +4,7 @@ This package contains a library for the creation, management, and installation
 of schema updates (called "migrations") for a relational database. In
 particular, this package lets the migration author express explicit dependencies
 between migrations. This library is accompanied by a number database-specific
-packages that contain the management tools to automatically install or revert
+executables that contain the management tools to automatically install or revert
 migrations accordingly.
 
 This package operates on two logical entities:
@@ -22,20 +22,28 @@ To get started, install with the right database-specific flag for your database.
 
 ```console
 stack install dbmigrations --flag dbmigrations:<backend>
-dbm-<backend> --help
+```
+
+Then run the database-specific executable that was installed.
+
+```console
+dbm-<backend> help
 ```
 
 For example,
 
 ```console
 stack install dbmigrations --flag dbmigrations:postgresql
-dbm-postgresql --help
+```
+
+```console
+dbm-postgresql help
 ```
 
 Available backends are:
 
 - `sqlite`
-- `mysql`
+- ~~`mysql`~~ _temporarily disabled due to upstream issue_
 - `postgresql`
 
 Since all of `dbm-<backend>` command line tools offer the exact same interface,
@@ -46,12 +54,12 @@ command` or `dbm-mysql command` and so on.
 
 The DBM tools work by creating migration files in a specific location, called a
 migration store, on your filesystem. This directory is where all possible
-migrations for your project will be kept. DMB allows you to create migrations
+migrations for your project will be kept. DBM allows you to create migrations
 that depend on each other. When you use DBM to upgrade your database schema, it
 determines which migrations are missing, what their dependencies are, and
 installs the required migrations in the correct order (based on dependencies).
 
-DMB works by prompting you for new migration information. It then creates a
+DBM works by prompting you for new migration information. It then creates a
 migration YAML file (whose format is described below), which you then edit by
 hand.
 
@@ -172,7 +180,7 @@ database.
 
 ## Configuration File Format
 
-All DMB commands accept a `--config-file` option which you can use to specify
+All DBM commands accept a `--config-file` option which you can use to specify
 the path to a configuration file containing your settings. This approach is an
 alternative to setting environment variables. The configuration file format uses
 the same environment variable names for its fields. An example configuration is
