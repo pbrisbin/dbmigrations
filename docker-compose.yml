@@ -1,0 +1,24 @@
+services:
+  dbm-postgresql:
+    build:
+      context: .
+      args:
+        BACKEND: postgresql
+    environment:
+      DBM_DATABASE: "postgres://postgres:password@postgres:5432"
+      DBM_MIGRATION_STORE: /tmp
+    command: [dbm, upgrade]
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  postgres:
+    image: postgres
+    environment:
+      PGUSER: postgres  # Good default for using psql
+      POSTGRES_PASSWORD: password
+    healthcheck:
+      test: pg_isready
+      interval: 10s
+      timeout: 5s
+      retries: 5
