@@ -1,6 +1,6 @@
 services:
   dbm-postgresql:
-    image: pbrisbin/dbmigrations-postgresql
+    image: pbrisbin/dbmigrations:3.0.0-postgresql
     build:
       context: .
       args:
