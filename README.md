@@ -18,6 +18,9 @@ This package operates on two logical entities:
 
 ## Getting started
 
+> [!TIP]
+> If you don't want to install anything, skip to the [Docker](#DOCKER) section.
+
 To get started, install with the right database-specific flag for your database.
 
 ```console
@@ -177,6 +180,34 @@ database.
     Migrations to install:
       hello-world
     ```
+
+## Docker
+
+We maintain docker images to allow administration of databases without requiring
+a Haskell tool-chain or installation of our CLI, provided you do have Docker
+available.
+
+Images are named:
+
+```
+pbrisbin/dbmigrations:<version>-<backend>
+```
+
+Each image contains an executable named `dbm`. To use it, just mount your
+migration files and set the `DBM_` variables accordingly.
+
+```console
+docker run --rm --interactive --tty \
+  --volume /path/to/migrations:/migrations \
+  --env DBM_MIGRATION_STORE=/migrations \
+  --env DBM_DATABASE=postgres://... \
+  pbrisbin/dbmigrations:3.0.0-postgresql upgrade
+```
+
+If you use a configuration file, be sure to mount that and use `--config-file`
+to specify the _in-container_ path to it.
+
+Note that any created migrations will be `root`-owned.
 
 ## Configuration File Format
 
