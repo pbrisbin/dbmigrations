@@ -44,7 +44,7 @@ extra-doc-files:
 
 source-repository head
   type: git
-  location: https://github.com/pbrisbin/amazonka-s3-sync
+  location: https://github.com/pbrisbin/dbmigrations
 
 flag postgresql
   description: Build the postgresql executable (and tests) application
